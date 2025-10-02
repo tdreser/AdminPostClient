@@ -83,8 +83,7 @@
 ### Etape 1
 `touch secret.txt`
 - je créé un fichier secret.txt comme demandé
-`ls`
-- permet simplement qu'il a bien été créé
+- `ls` permet simplement qu'il a bien été créé
 
 ### Etape 2
 
