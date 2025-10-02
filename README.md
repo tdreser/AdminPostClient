@@ -76,3 +76,22 @@
 
 - permet d'afficher les lignes de `log.txt` qui contiennent le mot "error"
 
+## Exercice 3
+
+<img src="/assets/Exercice3.png" height="100%" width="100%"> 
+
+### Etape 1
+`touch secret.txt`
+- je créé un fichier secret.txt comme demandé
+`ls`
+- permet simplement qu'il a bien été créé
+
+### Etape 2
+
+`chmod 600 secret.txt`
+- permet de changer les permissions, le rendant accessible (lecture et écriture)
+
+### Etape 3
+`ls -l secret.txt`
+- Cette commande permet de voir les permissions accordées par le fichier secret.txt
+- On voit bien que le r de "read" et le w de "write" sont présents.
