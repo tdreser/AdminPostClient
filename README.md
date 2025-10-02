@@ -32,6 +32,7 @@
 
 ## Exercice 2
 
+<img src="/assets/Exercice2(part1).png" height="100%" width="100%"> 
 
 ### Étape 1 :
 
@@ -63,9 +64,11 @@
 
 -   Affiche le contenu du fichier `log.txt`.
     
-<img src="/assets/Exercice2(part1).png" height="100%" width="100%"> 
-
 -   On observe bien (au dessus de la ligne rouge) que les 10 dernières lignes s'affichent
+
+
+<img src="/assets/Exercice2(part2).png" height="100%" width="100%"> 
+
 
 ### Étape 5 :
 
@@ -73,4 +76,3 @@
 
 - permet d'afficher les lignes de `log.txt` qui contiennent le mot "error"
 
-<img src="/assets/Exercice2(part2).png" height="100%" width="100%"> 
