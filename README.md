@@ -221,7 +221,7 @@ Ou avec les fichiers de logs :
 grep "Failed password" /var/log/auth.log > sshd_failed_logins.txt
 
 
-**Solution complète :**
+**Comment faire :**
 
 Avec journalctl
 journalctl -u sshd --since "24 hours ago" | grep -E "Failed password|Invalid user" > sshd_failed_logins.txt
@@ -240,21 +240,3 @@ cat sshd_failed_logins.txt
 Ou pour compter le nombre de tentatives échouées :
 
 wc -l sshd_failed_logins.txt
-
-
-### Notes
-
-- Le service SSH peut s'appeler `ssh` ou `sshd` selon la distribution Linux
-- Les logs SSH sont généralement stockés dans `/var/log/auth.log` (Debian/Ubuntu) ou `/var/log/secure` (RedHat/CentOS)
-- Vous devez avoir les privilèges sudo pour accéder aux logs système
-
-### Commandes utiles supplémentaires
-
-Afficher les 20 dernières tentatives échouées
-journalctl -u sshd | grep "Failed" | tail -n 20
-
-Afficher les IP des connexions échouées
-grep "Failed password" /var/log/auth.log | grep -oP 'from \K[\d.]+'
-
-Statistiques des tentatives échouées par IP
-grep "Failed password" /var/log/auth.log | grep -oP 'from \K[\d.]+' | sort | uniq -c | sort -nr
