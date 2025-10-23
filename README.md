@@ -83,7 +83,7 @@
 ### Etape 1
 `touch secret.txt`
 - je créé un fichier secret.txt comme demandé
-- `ls` permet simplement qu'il a bien été créé
+-`ls` permet simplement qu'il a bien été créé
 
 ### Etape 2
 
@@ -94,3 +94,167 @@
 `ls -l secret.txt`
 - Cette commande permet de voir les permissions accordées par le fichier secret.txt
 - On voit bien que le r de "read" et le w de "write" sont présents.
+
+
+----------------------------------------------------------
+
+# Exercices Intermédiaire 1
+
+### 1) Ouvrir **htop** et trier par mémoire
+```bash
+htop
+```
+- Dans *htop*, j’ai trié sur la colonne **MEM%** pour inverser l’ordre de tri.  
+- En tri decroissant, le processus qui consomme le **plus** de RAM est **en haut** de la liste.  
+- ici le PID du processus le plus haut est 2256 
+
+---
+
+### 2) Changer la priorité (*renice*) d’un processus
+```bash
+sudo renice -n 0 -p 4452
+```
+- J’ai ciblé le PID **4452**.  
+- La sortie a affiché : *old priority 0, new priority 0* → cela signifie que la **priorité était déjà à 0**, donc **pas de changement**.
+
+---
+
+### 3) Terminer un processus par son PID
+```bash
+sudo kill 4452
+```
+
+
+------------------------------------------------------------------------
+
+Screenshot : 
+![test4](https://i.imgur.com/jdVCMiM.png) 
+
+------------------------------------------------------------------------
+
+
+# Exercice Intermédiaire 2
+
+
+
+## 1) Créer le script
+```bash
+nano /home/pepitodelanoche/backups/backup_docs.sh
+```
+Contenu :
+```bash
+mkdir -p /home/pepitodelanoche/backups
+cp -a /home/pepitodelanoche/Documents/ /home/pepitodelanoche/backups/
+```
+> `mkdir -p` crée le dossier s'il n'existe pas.  
+> `Documents/` (slash) = copie **le contenu** de `Documents` *dans* `backups/`.
+
+---
+
+## 2) Planifier avec cron (tous les jours à 02:00)
+```bash
+crontab -e
+```
+Ajouter cette ligne :
+```
+0 2 * * * sh /home/pepitodelanoche/backups/backup_docs.sh
+```
+
+----------------------------------------------------------
+
+Screenshot : 
+![test5](https://i.imgur.com/SZtLcBg.png)
+
+----------------------------------------------------------
+
+## 3) # TP - Exercices Intermédiaire
+
+### Objectif
+Analyser les logs du service SSH pour identifier et sauvegarder les tentatives de connexion échouées.
+
+### Instructions
+
+#### 1. Afficher les logs du service SSH sur les 24 dernières heures
+
+- Pour consulter les logs SSH des dernières 24 heures, utilisez la commande suivante :
+
+```journalctl -u ssh --since "24 hours ago"```
+
+Ou pour les systèmes utilisant `sshd` :
+
+```journalctl -u sshd --since "24 hours ago"```
+
+
+**Alternative avec les fichiers de logs :**
+
+```grep "sshd" /var/log/auth.log | tail -n 100```
+
+
+#### 2. Filtrer les logs pour avoir que les connexions ratées
+
+- Pour afficher uniquement les tentatives de connexion échouées :
+
+```journalctl -u ssh --since "24 hours ago" | grep "Failed"``` 
+
+
+Ou :
+
+```grep "Failed password" /var/log/auth.log``` 
+
+**Autres patterns de recherche utiles :**
+
+Toutes les tentatives échouées
+grep -E "Failed password|Invalid user" /var/log/auth.log
+
+Avec journalctl
+journalctl -u sshd --since "24 hours ago" | grep -E "Failed password|Invalid user|authentication failure"
+
+#### 3. Sauvegarde tout dans un fichier sshd_failed_logins.txt
+
+- Pour sauvegarder les résultats dans un fichier :
+
+journalctl -u ssh --since "24 hours ago" | grep "Failed" > sshd_failed_logins.txt
+
+
+Ou avec les fichiers de logs :
+
+grep "Failed password" /var/log/auth.log > sshd_failed_logins.txt
+
+
+**Solution complète :**
+
+Avec journalctl
+journalctl -u sshd --since "24 hours ago" | grep -E "Failed password|Invalid user" > sshd_failed_logins.txt
+
+Avec auth.log
+grep -E "Failed password|Invalid user" /var/log/auth.log | grep "$(date -d '24 hours ago' '+%b %d')" > sshd_failed_logins.txt
+
+
+### Vérification
+
+Pour vérifier le contenu du fichier créé :
+
+cat sshd_failed_logins.txt
+
+
+Ou pour compter le nombre de tentatives échouées :
+
+wc -l sshd_failed_logins.txt
+
+
+### Notes
+
+- Le service SSH peut s'appeler `ssh` ou `sshd` selon la distribution Linux
+- Les logs SSH sont généralement stockés dans `/var/log/auth.log` (Debian/Ubuntu) ou `/var/log/secure` (RedHat/CentOS)
+- Vous devez avoir les privilèges sudo pour accéder aux logs système
+
+### Commandes utiles supplémentaires
+
+Afficher les 20 dernières tentatives échouées
+journalctl -u sshd | grep "Failed" | tail -n 20
+
+Afficher les IP des connexions échouées
+grep "Failed password" /var/log/auth.log | grep -oP 'from \K[\d.]+'
+
+Statistiques des tentatives échouées par IP
+grep "Failed password" /var/log/auth.log | grep -oP 'from \K[\d.]+' | sort | uniq -c | sort -nr
