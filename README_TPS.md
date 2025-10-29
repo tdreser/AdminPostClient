@@ -1,3 +1,3 @@
 # TP 1 
 
-<img src="B).png"> 
+<img src="/assets/tp /B).png"> 
