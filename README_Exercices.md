@@ -98,7 +98,8 @@
 
 ----------------------------------------------------------
 
-# Exercices Intermédiaire 1
+# Exercices Intermédiaires 
+## Exercice 1
 
 ### 1) Ouvrir **htop** et trier par mémoire
 ```bash
@@ -201,42 +202,25 @@ Ou :
 
 ```grep "Failed password" /var/log/auth.log``` 
 
-**Autres patterns de recherche utiles :**
-
-Toutes les tentatives échouées
-grep -E "Failed password|Invalid user" /var/log/auth.log
-
-Avec journalctl
-journalctl -u sshd --since "24 hours ago" | grep -E "Failed password|Invalid user|authentication failure"
 
 #### 3. Sauvegarde tout dans un fichier sshd_failed_logins.txt
 
 - Pour sauvegarder les résultats dans un fichier :
 
-journalctl -u ssh --since "24 hours ago" | grep "Failed" > sshd_failed_logins.txt
+`journalctl -u ssh --since "24 hours ago" | grep "Failed" > sshd_failed_logins.txt`
 
 
 Ou avec les fichiers de logs :
 
-grep "Failed password" /var/log/auth.log > sshd_failed_logins.txt
+`grep "Failed password" /var/log/auth.log > sshd_failed_logins.txt`
 
 
 **Comment faire :**
 
-Avec journalctl
-journalctl -u sshd --since "24 hours ago" | grep -E "Failed password|Invalid user" > sshd_failed_logins.txt
+- Avec journalctl :
+`journalctl -u sshd --since "24 hours ago" | grep -E "Failed password|Invalid user" > sshd_failed_logins.txt`
 
-Avec auth.log
-grep -E "Failed password|Invalid user" /var/log/auth.log | grep "$(date -d '24 hours ago' '+%b %d')" > sshd_failed_logins.txt
-
-
-### Vérification
-
-Pour vérifier le contenu du fichier créé :
-
-cat sshd_failed_logins.txt
+- Avec auth.log :
+`grep -E "Failed password|Invalid user" /var/log/auth.log | grep "$(date -d '24 hours ago' '+%b %d')" > sshd_failed_logins.txt`
 
 
-Ou pour compter le nombre de tentatives échouées :
-
-wc -l sshd_failed_logins.txt
